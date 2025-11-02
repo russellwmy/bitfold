@@ -19,6 +19,12 @@ pub struct AcknowledgmentHandler {
     congestion: CongestionControl,
 }
 
+impl Default for AcknowledgmentHandler {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AcknowledgmentHandler {
     /// Creates a new acknowledgment handler with default congestion control.
     pub fn new() -> Self {
@@ -29,7 +35,7 @@ impl AcknowledgmentHandler {
     pub fn with_congestion(congestion: CongestionControl) -> Self {
         AcknowledgmentHandler {
             sequence_number: 0,
-            remote_ack_sequence_num: u16::max_value(),
+            remote_ack_sequence_num: u16::MAX,
             sent_packets: HashMap::with_capacity(DEFAULT_SEND_PACKETS_SIZE),
             received_packets: SequenceBuffer::with_capacity(REDUNDANT_PACKET_ACKS_SIZE + 1),
             congestion,
@@ -184,7 +190,7 @@ impl AcknowledgmentHandler {
                     false
                 }
             })
-            .flat_map(|s| self.sent_packets.remove(&s))
+            .flat_map(|s| self.sent_packets.remove(s))
             .collect();
 
         // Record packet loss for congestion control

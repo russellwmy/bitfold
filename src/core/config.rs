@@ -128,12 +128,12 @@ impl Default for Config {
             max_packets_in_flight: 512,
             max_unestablished_connections: 50,
             channel_count: 1, // Default to single channel like most simple uses
-            incoming_bandwidth_limit: 0, // Unlimited
-            outgoing_bandwidth_limit: 0, // Unlimited
-            use_checksums: false, // Disabled by default for backward compatibility
+            incoming_bandwidth_limit: 2_097_152, // 2 MB/s - DoS protection (0 = unlimited)
+            outgoing_bandwidth_limit: 2_097_152, // 2 MB/s - prevents bandwidth abuse (0 = unlimited)
+            use_checksums: true, // Enabled for data integrity protection
             compression: CompressionAlgorithm::None, // Disabled by default
             compression_threshold: 128, // Don't compress packets smaller than 128 bytes
-            use_connection_handshake: false, // Disabled by default for backward compatibility
+            use_connection_handshake: true, // Enabled for enhanced security with 3-way handshake
             max_waiting_data: 32 * 1024 * 1024, // 32 MB - prevents memory exhaustion
             use_advanced_throttling: false, // Disabled by default for backward compatibility
             throttle_scale: 32, // Default scale

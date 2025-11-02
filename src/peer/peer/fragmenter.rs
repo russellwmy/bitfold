@@ -71,7 +71,7 @@ impl Peer {
             }
 
             // Check for integer overflow before casting to u8
-            let total_fragments_usize = (data.len() + fragment_payload - 1) / fragment_payload;
+            let total_fragments_usize = data.len().div_ceil(fragment_payload);
             if total_fragments_usize > u8::MAX as usize {
                 tracing::warn!(
                     "Payload {} bytes too large to fragment: would require {} fragments (max {}), dropping packet",
@@ -192,7 +192,7 @@ impl Peer {
             }
 
             // Check for integer overflow before casting to u8
-            let total_fragments_usize = (data.len() + fragment_payload - 1) / fragment_payload;
+            let total_fragments_usize = data.len().div_ceil(fragment_payload);
             if total_fragments_usize > u8::MAX as usize {
                 tracing::warn!(
                     "Unreliable payload {} bytes too large to fragment: would require {} fragments (max {}), dropping packet",

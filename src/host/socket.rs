@@ -112,13 +112,13 @@ impl Host {
         let loopback = Ipv4Addr::new(127, 0, 0, 1);
         let address = SocketAddrV4::new(loopback, 0);
         let socket = UdpSocket::bind(address)?;
-        Self::bind_with_config_and_clock(socket, config, Arc::new(SystemClock::default()))
+        Self::bind_with_config_and_clock(socket, config, Arc::new(SystemClock))
     }
 
     /// Creates a new Host bound to the specified address with custom configuration.
     pub fn bind_with_config<A: ToSocketAddrs>(addresses: A, config: Config) -> Result<Self> {
         let socket = UdpSocket::bind(addresses)?;
-        Self::bind_with_config_and_clock(socket, config, Arc::new(SystemClock::default()))
+        Self::bind_with_config_and_clock(socket, config, Arc::new(SystemClock))
     }
 
     /// Creates a new Host with a custom socket, configuration, and clock for testing.
@@ -192,7 +192,7 @@ impl Host {
         Self::bind_with_config_clock_and_interceptor(
             socket,
             config,
-            Arc::new(SystemClock::default()),
+            Arc::new(SystemClock),
             Some(interceptor),
         )
     }

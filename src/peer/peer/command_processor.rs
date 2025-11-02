@@ -703,9 +703,9 @@ mod tests {
         let cfg = Config::default();
         let mut peer = Peer::new(get_fake_addr(), &cfg, start);
 
-        // Initially unlimited
-        assert_eq!(peer.config().incoming_bandwidth_limit, 0);
-        assert_eq!(peer.config().outgoing_bandwidth_limit, 0);
+        // Initially set to default (2 MB/s for security)
+        assert_eq!(peer.config().incoming_bandwidth_limit, 2_097_152);
+        assert_eq!(peer.config().outgoing_bandwidth_limit, 2_097_152);
 
         // Apply BandwidthLimit command
         let _ = peer

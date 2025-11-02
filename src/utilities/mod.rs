@@ -59,7 +59,7 @@ pub fn resolve_host(hostname: &str, port: u16) -> io::Result<SocketAddr> {
 pub fn reverse_lookup(addr: &IpAddr) -> io::Result<String> {
     // Rust's std library doesn't have built-in reverse DNS in a cross-platform way
     // We use dns_lookup crate which provides cross-platform reverse DNS lookup
-    dns_lookup::lookup_addr(addr).map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+    dns_lookup::lookup_addr(addr).map_err(io::Error::other)
 }
 
 /// Parses an IP address string (without DNS resolution) to a socket address.

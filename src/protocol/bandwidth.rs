@@ -63,8 +63,7 @@ impl BandwidthManager {
             return true; // Unlimited
         }
 
-        let allowed = self.bytes_sent_this_window + byte_count as u32 <= self.outgoing_bandwidth;
-        allowed
+        self.bytes_sent_this_window + byte_count as u32 <= self.outgoing_bandwidth
     }
 
     /// Records that the given number of bytes were sent.

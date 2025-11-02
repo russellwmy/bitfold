@@ -127,10 +127,7 @@ impl Session for Peer {
             DeliveryGuarantee::Reliable => {
                 // Use enqueue_reliable_data which handles fragmentation
                 // Reliable unordered when ordering is None, otherwise ordered
-                let ordered = match ordering {
-                    OrderingGuarantee::None => false,
-                    _ => true,
-                };
+                let ordered = !matches!(ordering, OrderingGuarantee::None);
                 self.enqueue_reliable_data(channel_id, event.payload_arc(), ordered);
             }
             DeliveryGuarantee::Unreliable => {
@@ -306,6 +303,8 @@ mod tests {
     fn heartbeat_sent_when_bi_idle() {
         let mut cfg = crate::core::config::Config::default();
         cfg.heartbeat_interval = Some(Duration::from_millis(50));
+        cfg.use_checksums = false; // Disable checksums for this test to isolate heartbeat behavior
+        cfg.use_connection_handshake = false; // Disable handshake for this test to isolate heartbeat behavior
         let start = Instant::now();
 
         let mut conn = Peer::new("127.0.0.1:0".parse().unwrap(), &cfg, start);

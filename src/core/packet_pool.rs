@@ -137,7 +137,7 @@ impl CompressionBufferPool {
     /// Acquires a buffer from the pool or creates a new one.
     /// The buffer is cleared and ready to use.
     pub fn acquire(&mut self) -> Vec<u8> {
-        self.pool.pop().unwrap_or_else(Vec::new)
+        self.pool.pop().unwrap_or_default()
     }
 
     /// Returns a buffer to the pool for reuse.

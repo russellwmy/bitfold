@@ -161,7 +161,7 @@ impl<TSocket: TransportSocket, TSession: Session> SessionManager<TSocket, TSessi
         SessionManager {
             receive_buffer: vec![0; config.receive_buffer_max_size],
             sessions: Default::default(),
-            user_event_receiver: user_event_receiver,
+            user_event_receiver,
             messenger: SocketEventSenderAndConfig::new(config, socket, event_sender, interceptor),
             user_event_sender,
             event_receiver,

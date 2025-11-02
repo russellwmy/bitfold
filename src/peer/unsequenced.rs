@@ -108,7 +108,7 @@ impl UnsequencedState {
         let offset = group.wrapping_sub(self.incoming_unsequenced_group);
 
         // If the group is far ahead (and not wrapping backwards), we need to advance the window base
-        if offset >= 1024 && offset <= 32768 {
+        if (1024..=32768).contains(&offset) {
             // Calculate how much to advance
             let advance = offset.saturating_sub(512); // Keep window centered on new packets
 
