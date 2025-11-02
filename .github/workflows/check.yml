@@ -9,7 +9,7 @@ on:
 
 jobs:
   check:
-    name: Verify fmt, clippy, and tests
+    name: Verify fmt, clippy, tests, and security
     runs-on: ubuntu-latest
 
     steps:
@@ -30,3 +30,8 @@ jobs:
 
       - name: Run tests (stable)
         run: cargo test --locked
+
+      - name: Security audit
+        uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
