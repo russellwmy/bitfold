@@ -30,6 +30,7 @@
 //! - `pmtu_converge_threshold`: Convergence threshold (stop when high - low <= this)
 
 use std::time::{Duration, Instant};
+use rand::RngCore;
 
 use crate::{
     core::{config::Config, shared::SharedBytes},
@@ -127,6 +128,12 @@ impl PmtuDiscovery {
             return None;
         }
 
+        // Clamp high bound to what we can actually send as a single datagram
+        let datagram_cap = self.config.receive_buffer_max_size.min(u16::MAX as usize) as u16;
+        if self.high > datagram_cap {
+            self.high = datagram_cap;
+        }
+
         // Check convergence
         if self.high.saturating_sub(self.low) <= self.config.pmtu_converge_threshold {
             self.fragment_size = self.low;
@@ -139,12 +146,32 @@ impl PmtuDiscovery {
             return None;
         }
 
-        // Next candidate: mid
+        // Next candidate: mid (clamped to what we can actually send in one datagram)
         let mid = ((self.low as u32 + self.high as u32) / 2) as u16;
-        let token: u32 = rand::random();
-        let payload = SharedBytes::from_vec(vec![0u8; mid as usize]);
+        let target = mid.min(datagram_cap);
 
-        let command = ProtocolCommand::PMTUProbe { size: mid, token, payload };
+        // Compute payload length so total encoded datagram size ~= target
+        // Total datagram size = static_overhead (packet-level) + per-command length prefix
+        //                      + PMTUProbe header (type + size + token + payload_len) + payload_len
+        let compression_overhead = match self.config.compression {
+            crate::core::config::CompressionAlgorithm::Lz4 => 5, // 1 marker + 4 original size
+            _ => 1,                                              // 1 marker for None/Zlib
+        } as u16;
+        let checksum_overhead = if self.config.use_checksums { 4 } else { 0 } as u16;
+        let static_overhead = 1 /* command count */ + compression_overhead + checksum_overhead;
+        let per_command_overhead = 2 /* len prefix */ + (1 /* type */ + 2 /* size */ + 4 /* token */ + 2 /* payload len */);
+        let total_overhead = static_overhead + per_command_overhead;
+
+        // Ensure at least 1 byte payload to avoid degenerate probes
+        let payload_len = if target > total_overhead { (target - total_overhead).max(1) } else { 1 } as usize;
+        let token: u32 = rand::random();
+        // Fill payload with random bytes to avoid being shrunk by compression
+        let mut payload_vec = vec![0u8; payload_len];
+        rand::rng().fill_bytes(&mut payload_vec);
+        let payload = SharedBytes::from_vec(payload_vec);
+
+        // Use `target` as the advertised size (intended datagram size)
+        let command = ProtocolCommand::PMTUProbe { size: target, token, payload };
 
         self.outstanding = Some((mid, token, time));
         self.last_probe = time;

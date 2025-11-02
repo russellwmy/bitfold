@@ -60,6 +60,18 @@ impl Peer {
             return Ok(None);
         }
 
+        // Allow PMTU probes to bypass the current fragment-size cap so we can
+        // actually test larger datagram sizes. Still cap to receive buffer size.
+        let first_is_pmtu_probe = matches!(
+            self.command_queue.iter().next(),
+            Some(crate::protocol::command::ProtocolCommand::PMTUProbe { .. })
+        );
+        let max_size = if first_is_pmtu_probe {
+            self.config.receive_buffer_max_size
+        } else {
+            max_size
+        };
+
         // Worst-case overhead outside of command bytes:
         // - 1 byte command count header
         // - per-command 2-byte length prefix
@@ -96,18 +108,21 @@ impl Peer {
             // First command is too large to fit within max_size
             // This can happen with very large data payloads or very small MTU
             if let Some(first_cmd) = self.command_queue.iter().next() {
-                let encoded =
-                    crate::protocol::command_codec::CommandEncoder::encode_command(first_cmd)?;
-                let cmd_size = 2 + encoded.len();
-                let total_with_overhead = static_overhead + cmd_size;
+                // Don't warn for PMTU probes - they're expected to exceed normal MTU
+                if !first_is_pmtu_probe {
+                    let encoded =
+                        crate::protocol::command_codec::CommandEncoder::encode_command(first_cmd)?;
+                    let cmd_size = 2 + encoded.len();
+                    let total_with_overhead = static_overhead + cmd_size;
 
-                tracing::warn!(
-                    "Command too large for MTU: command type {:?}, encoded size {} bytes, total with overhead {} bytes, max allowed {} bytes. Command will remain queued.",
-                    first_cmd.command_type(),
-                    cmd_size,
-                    total_with_overhead,
-                    max_size
-                );
+                    tracing::warn!(
+                        "Command too large for MTU: command type {:?}, encoded size {} bytes, total with overhead {} bytes, max allowed {} bytes. Command will remain queued.",
+                        first_cmd.command_type(),
+                        cmd_size,
+                        total_with_overhead,
+                        max_size
+                    );
+                }
             }
             // Nothing selected within the budget; avoid emitting oversize datagrams.
             return Ok(None);
