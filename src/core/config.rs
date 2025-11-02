@@ -130,25 +130,25 @@ impl Default for Config {
             channel_count: 1, // Default to single channel like most simple uses
             incoming_bandwidth_limit: 2_097_152, // 2 MB/s - DoS protection (0 = unlimited)
             outgoing_bandwidth_limit: 2_097_152, // 2 MB/s - prevents bandwidth abuse (0 = unlimited)
-            use_checksums: true, // Enabled for data integrity protection
+            use_checksums: true,                 // Enabled for data integrity protection
             compression: CompressionAlgorithm::None, // Disabled by default
-            compression_threshold: 128, // Don't compress packets smaller than 128 bytes
+            compression_threshold: 128,          // Don't compress packets smaller than 128 bytes
             use_connection_handshake: true, // Enabled for enhanced security with 3-way handshake
             max_waiting_data: 32 * 1024 * 1024, // 32 MB - prevents memory exhaustion
             use_advanced_throttling: false, // Disabled by default for backward compatibility
-            throttle_scale: 32, // Default scale
-            throttle_acceleration: 2, // Default acceleration
-            throttle_deceleration: 2, // Default deceleration
-            throttle_interval: 5000, // 5 seconds (default)
+            throttle_scale: 32,             // Default scale
+            throttle_acceleration: 2,       // Default acceleration
+            throttle_deceleration: 2,       // Default deceleration
+            throttle_interval: 5000,        // 5 seconds (default)
             use_window_flow_control: false, // Disabled by default for backward compatibility
             initial_window_size: 512, // Start with 512 packets (matches max_packets_in_flight)
-            min_window_size: 64, // Minimum 64 packets
-            max_window_size: 4096, // Maximum 4096 packets
-            max_duplicate_peers: 0, // Unlimited by default
+            min_window_size: 64,      // Minimum 64 packets
+            max_window_size: 4096,    // Maximum 4096 packets
+            max_duplicate_peers: 0,   // Unlimited by default
             socket_recv_buffer_size: None, // Use system default
             socket_send_buffer_size: None, // Use system default
-            socket_ttl: None, // Use system default
-            socket_broadcast: false, // Disabled by default
+            socket_ttl: None,         // Use system default
+            socket_broadcast: false,  // Disabled by default
             use_pmtu_discovery: true,
             pmtu_min: 576,
             pmtu_max: 1400,
