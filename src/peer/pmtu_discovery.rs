@@ -30,6 +30,7 @@
 //! - `pmtu_converge_threshold`: Convergence threshold (stop when high - low <= this)
 
 use std::time::{Duration, Instant};
+
 use rand::RngCore;
 
 use crate::{
@@ -163,7 +164,8 @@ impl PmtuDiscovery {
         let total_overhead = static_overhead + per_command_overhead;
 
         // Ensure at least 1 byte payload to avoid degenerate probes
-        let payload_len = if target > total_overhead { (target - total_overhead).max(1) } else { 1 } as usize;
+        let payload_len =
+            if target > total_overhead { (target - total_overhead).max(1) } else { 1 } as usize;
         let token: u32 = rand::random();
         // Fill payload with random bytes to avoid being shrunk by compression
         let mut payload_vec = vec![0u8; payload_len];

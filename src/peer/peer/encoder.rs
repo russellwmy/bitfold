@@ -66,11 +66,8 @@ impl Peer {
             self.command_queue.iter().next(),
             Some(crate::protocol::command::ProtocolCommand::PMTUProbe { .. })
         );
-        let max_size = if first_is_pmtu_probe {
-            self.config.receive_buffer_max_size
-        } else {
-            max_size
-        };
+        let max_size =
+            if first_is_pmtu_probe { self.config.receive_buffer_max_size } else { max_size };
 
         // Worst-case overhead outside of command bytes:
         // - 1 byte command count header
