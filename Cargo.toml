@@ -1,6 +1,6 @@
 [package]
 name = "bitfold"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Russell Wong"]
 edition = "2021"
 rust-version = "1.90.0"
