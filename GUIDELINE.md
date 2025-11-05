@@ -34,34 +34,55 @@ Bitfold is a reliable UDP networking library inspired by ENet. These guidelines 
 
 ## Architecture
 
-### Layered Design
+### Multi-Crate Workspace
+
+Bitfold uses a workspace architecture with separate crates for modularity:
 
 ```text
-bitfold::host      → I/O, socket operations, session management
-bitfold::peer      → Per-peer state machine, command batching
-bitfold::protocol  → Pure protocol logic (no I/O)
-bitfold::core      → Configuration, errors, shared types
-bitfold::utilities → Helper functions
+bitfold-core      → Core types, configuration, and utilities
+bitfold-protocol  → Pure protocol logic (no I/O)
+bitfold-peer      → Per-peer state machine, command batching
+bitfold-host      → I/O, socket operations, session management
+bitfold           → Main library (re-exports all public APIs)
 ```
 
 **Key principles:**
 
 - **Protocol layer is pure** - No side effects, no I/O, fully testable
-- **Clear boundaries** - Each module has well-defined responsibilities
-- **Dependency direction** - Always depend downward (host → peer → protocol → core)
+- **Clear boundaries** - Each crate has well-defined responsibilities
+- **Dependency direction** - Always depend downward (bitfold → host → peer → protocol → core)
+- **Workspace versioning** - All crates share version and package metadata
 
-### Module Organization
+### Crate Organization
 
-```rust
-// Good: Clear separation
-mod acknowledgment;  // ACK handling logic
-mod congestion;      // RTT tracking, throttling
-mod packet;          // Packet encoding/decoding
-mod command;         // Protocol command types
+**bitfold-core:**
+- Configuration types
+- Error definitions
+- Shared utilities
+- Address resolution
 
-// Bad: Mixed concerns
-mod network;  // Too broad, unclear responsibility
-```
+**bitfold-protocol:**
+- Packet encoding/decoding
+- Command types (ACK, Ping, Send, etc.)
+- Fragmentation logic
+- Compression support
+
+**bitfold-peer:**
+- Peer state machine
+- Acknowledgment tracking
+- Congestion control
+- Command batching
+
+**bitfold-host:**
+- Socket I/O operations
+- Session management
+- Event dispatching
+- Connection lifecycle
+
+**bitfold:**
+- Public API surface
+- Re-exports from workspace crates
+- Documentation and examples
 
 ## Code Quality
 
@@ -431,18 +452,31 @@ let count = count_usize as u8;
 - Documentation files (`*.md`)
 - Configuration files (`.github/`, `.vscode/`, etc.)
 
-### Module Structure
+### Workspace Structure
 
 ```text
-src/
-  lib.rs          - Public API and module declarations
-  core/           - Core types and configuration
-  protocol/       - Protocol logic (pure, no I/O)
-  peer/           - Peer state management
-  host/           - I/O layer and session management
-  utilities/      - Helper functions
+Cargo.toml                    - Workspace definition
+crates/
+  bitfold-core/
+    src/lib.rs                - Core types and utilities
+    Cargo.toml
+  bitfold-protocol/
+    src/lib.rs                - Protocol logic (pure, no I/O)
+    Cargo.toml
+  bitfold-peer/
+    src/lib.rs                - Peer state management
+    Cargo.toml
+  bitfold-host/
+    src/lib.rs                - I/O layer and session management
+    Cargo.toml
+  bitfold/
+    src/lib.rs                - Public API re-exports
+    Cargo.toml
+examples/
+  server.rs                   - Example server
+  client.rs                   - Example client
 tests/
-  integration.rs  - Integration tests
+  integration.rs              - Integration tests
 ```
 
 ## Summary
