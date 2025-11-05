@@ -9,7 +9,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Russell Wong"]
 edition = "2021"
 rust-version = "1.90.0"
@@ -19,10 +19,10 @@ repository = "https://github.com/russellwmy/bitfold"
 
 [workspace.dependencies]
 # Workspace crates
-bitfold-core = { path = "crates/bitfold-core", version = "0.1.2" }
-bitfold-protocol = { path = "crates/bitfold-protocol", version = "0.1.2" }
-bitfold-peer = { path = "crates/bitfold-peer", version = "0.1.2" }
-bitfold-host = { path = "crates/bitfold-host", version = "0.1.2" }
+bitfold-core = { path = "crates/bitfold-core", version = "0.1.3" }
+bitfold-protocol = { path = "crates/bitfold-protocol", version = "0.1.3" }
+bitfold-peer = { path = "crates/bitfold-peer", version = "0.1.3" }
+bitfold-host = { path = "crates/bitfold-host", version = "0.1.3" }
 
 # External dependencies
 byteorder = "1.5.0"
