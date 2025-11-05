@@ -1,0 +1,17 @@
+[package]
+name = "bitfold-utilities"
+description = "Utility functions for the Bitfold networking library"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+dns-lookup = { workspace = true }
+socket2 = { workspace = true }
+
+[lints]
+workspace = true

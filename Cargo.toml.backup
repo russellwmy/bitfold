@@ -1,32 +1,21 @@
-[workspace]
-resolver = "2"
-members = [
-    "crates/bitfold-core",
-    "crates/bitfold-protocol",
-    "crates/bitfold-peer",
-    "crates/bitfold-utilities",
-    "crates/bitfold-host",
-    "crates/bitfold",
-]
-
-[workspace.package]
+[package]
+name = "bitfold"
 version = "0.1.2"
 authors = ["Russell Wong"]
 edition = "2021"
 rust-version = "1.90.0"
 license = "MIT"
+description = "A modern, high-performance reliable UDP networking library inspired by ENet, built with Rust"
+keywords = ["networking", "udp", "enet", "reliable-udp", "game-networking"]
+categories = ["network-programming", "game-development", "asynchronous"]
 homepage = "https://github.com/russellwmy/bitfold"
 repository = "https://github.com/russellwmy/bitfold"
+readme = "README.md"
 
-[workspace.dependencies]
-# Workspace crates
-bitfold-core = { path = "crates/bitfold-core", version = "0.1.2" }
-bitfold-protocol = { path = "crates/bitfold-protocol", version = "0.1.2" }
-bitfold-peer = { path = "crates/bitfold-peer", version = "0.1.2" }
-bitfold-utilities = { path = "crates/bitfold-utilities", version = "0.1.2" }
-bitfold-host = { path = "crates/bitfold-host", version = "0.1.2" }
+[lib]
+doctest = false
 
-# External dependencies
+[dependencies]
 byteorder = "1.5.0"
 rand = "0.9.2"
 crc32fast = "1.5.0"
@@ -37,7 +26,7 @@ crossbeam-channel = "0.5.15"
 socket2 = "0.6.1"
 dns-lookup = "3.0.1"
 
-# Dev dependencies
+[dev-dependencies]
 quickcheck = "1.0.3"
 quickcheck_macros = "1.1.0"
 
@@ -74,7 +63,7 @@ inherits = "dev"
 [profile.android-dev]
 inherits = "dev"
 
-[workspace.lints.clippy]
+[lints.clippy]
 all = { level = "allow", priority = -100 }
 correctness = { level = "deny", priority = -50 }
 suspicious = { level = "deny", priority = -50 }
@@ -88,6 +77,6 @@ len_zero = "deny"
 or_fun_call = "deny"
 unnecessary_lazy_evaluations = "deny"
 
-[workspace.lints.rust]
+[lints.rust]
 # Will take effect since Rust 1.80, produces unused warning before it: https://github.com/rust-lang/cargo/pull/13913
 unexpected_cfgs = { level = "allow", check-cfg = ['cfg(enable_const_type_id)'] }
