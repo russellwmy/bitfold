@@ -10,9 +10,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [dependencies]
-byteorder = { workspace = true }
-rand = { workspace = true }
-tracing = { workspace = true }
+# bitfold-core is intentionally dependency-free (only uses std)
 
 [lints]
 workspace = true

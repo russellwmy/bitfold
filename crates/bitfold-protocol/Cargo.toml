@@ -12,6 +12,7 @@ repository.workspace = true
 [dependencies]
 bitfold-core = { workspace = true }
 byteorder = { workspace = true }
+rand = { workspace = true }
 crc32fast = { workspace = true }
 flate2 = { workspace = true }
 lz4 = { workspace = true }
